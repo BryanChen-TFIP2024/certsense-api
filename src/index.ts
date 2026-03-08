@@ -46,5 +46,18 @@ openapi.route("/tasks", tasksRouter);
 // Register other endpoints
 openapi.post("/dummy/:slug", DummyEndpoint);
 
+// 1. Add this near the other route definitions
+app.get('/status', async (c) => {
+  // 2. This query pulls from your new certsense-db
+  const { results } = await c.env.DB.prepare(
+    "SELECT hostname, issuer, expiry_date, status, last_check_at FROM monitored_certs ORDER BY expiry_date ASC"
+  ).all();
+
+  return c.json({
+    project: "CertSense",
+    timestamp: new Date().toISOString(),
+    monitored_domains: results
+  });
+});
 // Export the Hono app
 export default app;
