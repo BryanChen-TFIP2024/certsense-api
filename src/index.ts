@@ -46,9 +46,8 @@ openapi.route("/tasks", tasksRouter);
 // Register other endpoints
 openapi.post("/dummy/:slug", DummyEndpoint);
 
-// 1. Add this near the other route definitions
-app.get('/status', async (c) => {
-  // 2. This query pulls from your new certsense-db
+// Registering through openapi ensures the route is recognized by the template's router
+openapi.get('/status', async (c) => {
   const { results } = await c.env.DB.prepare(
     "SELECT hostname, issuer, expiry_date, status, last_check_at FROM monitored_certs ORDER BY expiry_date ASC"
   ).all();
