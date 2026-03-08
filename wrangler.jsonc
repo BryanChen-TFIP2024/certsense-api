@@ -9,7 +9,7 @@
   "workers_dev": false,
   "routes": [
     {
-      "pattern": "certsense.projectsensei.com/*", // include wildcard to match paths
+      "pattern": "certsense.projectsensei.com", // include wildcard to match paths
       "custom_domain": true
     }
   ],
