@@ -3,22 +3,26 @@ import { Hono } from "hono";
 import { tasksRouter } from "./endpoints/tasks/router";
 import { ContentfulStatusCode } from "hono/utils/http-status";
 import { DummyEndpoint } from "./endpoints/dummyEndpoint";
+import { CertStatus } from "./endpoints/status"; // Imported sensing logic
+
+// Define the environment bindings for D1
+type Env = {
+	DB: D1Database;
+};
 
 // Start a Hono app
 const app = new Hono<{ Bindings: Env }>();
 
 app.onError((err, c) => {
 	if (err instanceof ApiException) {
-		// If it's a Chanfana ApiException, let Chanfana handle the response
 		return c.json(
 			{ success: false, errors: err.buildResponse() },
 			err.status as ContentfulStatusCode,
 		);
 	}
 
-	console.error("Global error handler caught:", err); // Log the error if it's not known
+	console.error("Global error handler caught:", err);
 
-	// For other errors, return a generic 500 response
 	return c.json(
 		{
 			success: false,
@@ -33,30 +37,24 @@ const openapi = fromHono(app, {
 	docs_url: "/",
 	schema: {
 		info: {
-			title: "My Awesome API",
-			version: "2.0.0",
-			description: "This is the documentation for my awesome API.",
+			title: "CertSense API",
+			version: "1.0.0",
+			description: "System for External Network Sensing & Event Intelligence (SENSEI)",
 		},
 	},
 });
 
-// Register Tasks Sub router
-openapi.route("/tasks", tasksRouter);
+/**
+ * Endpoint Registration
+ * Using openapi.get ensures the routes are recognized by the template's internal mapping
+ */
 
-// Register other endpoints
+// 1. Register the CertSense Status Dashboard
+openapi.get("/status", CertStatus);
+
+// 2. Register existing template routes
+openapi.route("/tasks", tasksRouter);
 openapi.post("/dummy/:slug", DummyEndpoint);
 
-// Registering through openapi ensures the route is recognized by the template's router
-openapi.get('/status', async (c) => {
-  const { results } = await c.env.DB.prepare(
-    "SELECT hostname, issuer, expiry_date, status, last_check_at FROM monitored_certs ORDER BY expiry_date ASC"
-  ).all();
-
-  return c.json({
-    project: "CertSense",
-    timestamp: new Date().toISOString(),
-    monitored_domains: results
-  });
-});
-// Export the Hono app
+// Export the Hono app for Cloudflare Workers
 export default app;
