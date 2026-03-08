@@ -2,14 +2,14 @@
   "compatibility_date": "2025-10-08",
   "main": "src/index.ts",
   "name": "certsense-api",
-  "upload_source_maps": true,
+  "upload_source_maps": true, // remove if Wrangler complains
   "observability": {
     "enabled": true
   },
-  "workers_dev": false, // This disables the workers.dev address
+  "workers_dev": false,
   "routes": [
     {
-      "pattern": "certsense.projectsensei.com", // Use your custom domain
+      "pattern": "certsense.projectsensei.com/*", // include wildcard to match paths
       "custom_domain": true
     }
   ],
