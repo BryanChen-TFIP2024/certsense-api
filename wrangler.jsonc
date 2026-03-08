@@ -9,7 +9,7 @@
   "workers_dev": false, // This disables the *.workers.dev address
   "routes": [
     {
-      "pattern": "certsense.projectsensei.com/*", // Use your custom domain
+      "pattern": "certsense.projectsensei.com", // Use your custom domain
       "custom_domain": true
     }
   ],
