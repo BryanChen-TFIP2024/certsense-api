@@ -1,4 +1,4 @@
-import { Bool, OpenAPIRoute } from "chanfana";
+import { OpenAPIRoute } from "chanfana";
 import { z } from "zod";
 
 export class CertStatus extends OpenAPIRoute {
@@ -22,7 +22,7 @@ export class CertStatus extends OpenAPIRoute {
   };
 
   async handle(c: any) {
-    // This correctly pulls from your certsense-db binding
+    // This uses the DB binding (certsense-db) identified in your build logs 
     const { results } = await c.env.DB.prepare(
       "SELECT hostname, issuer, expiry_date, status, last_check_at FROM monitored_certs ORDER BY expiry_date ASC"
     ).all();
