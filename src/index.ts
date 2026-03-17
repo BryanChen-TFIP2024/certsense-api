@@ -58,4 +58,3 @@ openapi.post("/dummy/:slug", DummyEndpoint);
 
 // Export the Hono app for Cloudflare Workers
 export default app;
-export default app;
